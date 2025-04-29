@@ -1,17 +1,29 @@
-/* OHIFCornerstoneViewport.css */
+/* Parent container */
 .viewport-and-scrollbar-container {
+  display: flex;
+  flex-flow: row nowrap; /* or row wrap, if you want it to wrap on smaller screens */
   width: 100%;
   height: 100%;
-  align-items: stretch; /* Ensures the scrollbar aligns with the height of the viewport */
-  display: flex;
-  justify-content: space-between;
+  align-items: stretch; /* Ensures the child items stretch vertically */
+  /* justify-content: space-between; -- optional, depending on how you want to space things out */
 }
+
+/* The main viewport takes all leftover space */
 .viewport-wrapper {
-  position: relative; /* For positioning of overlay elements */
+  flex: 1; /* Expands to fill available horizontal space */
+  min-width: 0; /* Prevents horizontal scroll from flex items that can't shrink */
+  position: relative;
 }
 
+/* The scrollbar panel can be fixed or also flexible */
 .scrollbar-wrapper {
-  position: relative; /* For positioning of overlay elements */
+  /* Fixed width example: */
+  width: 300px;
+  flex: 0 0 20%; /* Tells flexbox this item won't shrink or grow */
+
+  /* If you want it to be flexible instead:
+     flex: 0 0 20%;  // e.g., 20% of container
+  */
+
+  position: relative;
 }
-
-

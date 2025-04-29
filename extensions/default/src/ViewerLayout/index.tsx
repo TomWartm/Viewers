@@ -6,6 +6,7 @@ import { HangingProtocolService, CommandsManager } from '@ohif/core';
 import { useAppConfig } from '@state';
 import ViewerHeader from './ViewerHeader';
 import SidePanelWithServices from '../Components/SidePanelWithServices';
+import { Onboarding } from '@ohif/ui-next';
 
 function ViewerLayout({
   // From Extension Module Params
@@ -109,11 +110,11 @@ function ViewerLayout({
   // TODO: Remove this hack to avoid not diplaying Study preview image
   useEffect(() => {
     let timer;
-    if(timer) clearTimeout(timer);
+    if (timer) {
+      clearTimeout(timer);
+    }
     timer = setTimeout(() => {
-      
       setRightPanelClosed(false);
-
     }, 2000);
 
     return () => clearTimeout(timer);
@@ -149,13 +150,11 @@ function ViewerLayout({
           {/* TOOLBAR + GRID */}
           <div className="flex h-full flex-1 flex-col">
             <div className="relative flex h-full flex-1 items-center justify-center overflow-hidden bg-black">
-              <ErrorBoundary context="Grid">
-                <ViewportGridComp
-                  servicesManager={servicesManager}
-                  viewportComponents={viewportComponents}
-                  commandsManager={commandsManager}
-                />
-              </ErrorBoundary>
+              <ViewportGridComp
+                servicesManager={servicesManager}
+                viewportComponents={viewportComponents}
+                commandsManager={commandsManager}
+              />
             </div>
           </div>
           {hasRightPanels ? (
@@ -170,7 +169,7 @@ function ViewerLayout({
           ) : null}
         </React.Fragment>
       </div>
-
+      <Onboarding />
       <InvestigationalUseDialog dialogConfiguration={appConfig?.investigationalUseDialog} />
     </div>
   );
@@ -178,9 +177,7 @@ function ViewerLayout({
 
 ViewerLayout.propTypes = {
   // From extension module params
-  extensionManager: PropTypes.shape({
-    getModuleEntry: PropTypes.func.isRequired,
-  }).isRequired,
+  extensionManager: PropTypes.shape({ getModuleEntry: PropTypes.func.isRequired }).isRequired,
   commandsManager: PropTypes.instanceOf(CommandsManager),
   servicesManager: PropTypes.object.isRequired,
   // From modes

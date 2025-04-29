@@ -3,6 +3,11 @@ import PropTypes from 'prop-types';
 import UserFeedbackRow from './UserFeedbackRow';
 import debounce from 'lodash.debounce';
 
+const orthancServerUrl =
+  window.location.hostname === 'localhost'
+    ? 'http://localhost'
+    : 'https://orthanc.katelyncmorrison.com';
+
 const UserFeedback = ({ seriesID }) => {
   const [feedback, setFeedback] = useState({
     'Anatomically realistic?': { thumbsUp: false, thumbsDown: false },
@@ -58,73 +63,73 @@ const UserFeedback = ({ seriesID }) => {
     });
   };
 
-  
+
   const addMetadataToSeries = async (seriesID, data, type) => {
-    if (type !== 'Feedback' ) {
-        console.error('Invalid metadata type');
-        return;
+    if (type !== 'Feedback') {
+      console.error('Invalid metadata type');
+      return;
     }
     try {
-        const url = `http://localhost/pacs/series/${seriesID}/metadata/${type}`;
-        const response = await fetch(url, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'text/plain'  
-            },
-            body: data 
-        });
+      const url = `${orthancServerUrl}/pacs/series/${seriesID}/metadata/${type}`;
+      const response = await fetch(url, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'text/plain'
+        },
+        body: data
+      });
 
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.log("Response not ok. Status:", response.status, "Response text:", errorText);
-            return;
-        }
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.log("Response not ok. Status:", response.status, "Response text:", errorText);
+        return;
+      }
 
     } catch (error) {
-        console.error('There was a problem with your fetch operation:', error);
+      console.error('There was a problem with your fetch operation:', error);
     }
-};
+  };
 
-const debouncedAddMetadataToSeries = useCallback(
+  const debouncedAddMetadataToSeries = useCallback(
     debounce((orthancSeriesID, value, type) => {
       addMetadataToSeries(orthancSeriesID, value, type);
     }, 500),
-    [] 
+    []
   );
 
-const getMetadataOfSeries = async (seriesID, type) => {
-    if (type !== 'Feedback' ) {
-        console.error('Invalid metadata type');
-        return;
+  const getMetadataOfSeries = async (seriesID, type) => {
+    if (type !== 'Feedback') {
+      console.error('Invalid metadata type');
+      return;
     }
     try {
-        const url = `http://localhost/pacs/series/${seriesID}/metadata/${type}`;
-        console.log("url", url);
-        const response = await fetch(url, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'text/plain'  // Ensure the server expects text/plain content type
-            }
-        });
+      const url = `${orthancServerUrl}/pacs/series/${seriesID}/metadata/${type}`;
+      console.log("url", url);
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'text/plain'  // Ensure the server expects text/plain content type
+        }
+      });
 
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.log("Response not ok. Status:", response.status, "Response text:", errorText);
-            return;
-        }
-        else {
-            return response.text();
-        }
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.log("Response not ok. Status:", response.status, "Response text:", errorText);
+        return;
+      }
+      else {
+        return response.text();
+      }
 
     } catch (error) {
-        console.error('There was a problem with your fetch operation:', error);
+      console.error('There was a problem with your fetch operation:', error);
     }
-}
+  }
 
   return (
     <div>
       <table className="text-gray-500 text-base w-full mt-2">
-      
+
         <tbody >
           {Object.keys(feedback).map((question) => (
             <UserFeedbackRow

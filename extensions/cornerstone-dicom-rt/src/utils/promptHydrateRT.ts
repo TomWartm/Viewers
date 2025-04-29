@@ -10,7 +10,6 @@ function promptHydrateRT({
   servicesManager,
   rtDisplaySet,
   viewportId,
-  toolGroupId = 'default',
   preHydrateCallbacks,
   hydrateRTDisplaySet,
 }: withAppTypes) {
@@ -27,16 +26,13 @@ function promptHydrateRT({
         callback();
       });
 
-      window.setTimeout(async () => {
-        const isHydrated = await hydrateRTDisplaySet({
-          rtDisplaySet,
-          viewportId,
-          toolGroupId,
-          servicesManager,
-        });
+      const isHydrated = await hydrateRTDisplaySet({
+        rtDisplaySet,
+        viewportId,
+        servicesManager,
+      });
 
-        resolve(isHydrated);
-      }, 0);
+      resolve(isHydrated);
     }
   });
 }
@@ -46,11 +42,13 @@ function _askHydrate(uiViewportDialogService: AppTypes.UIViewportDialogService, 
     const message = 'Do you want to open this Segmentation?';
     const actions = [
       {
+        id: 'no-hydrate',
         type: ButtonEnums.type.secondary,
         text: 'No',
         value: RESPONSE.CANCEL,
       },
       {
+        id: 'yes-hydrate',
         type: ButtonEnums.type.primary,
         text: 'Yes',
         value: RESPONSE.HYDRATE_SEG,

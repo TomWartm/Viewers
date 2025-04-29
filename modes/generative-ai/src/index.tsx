@@ -4,10 +4,10 @@ import {addTool} from '@cornerstonejs/tools';
 import initToolGroups from './initToolGroups';
 import toolbarButtons from './toolbarButtons';
 import segmentationButtons from './segmentationButtons';
-import initMetaData from './initMetaData';
+// import initMetaData from './initMetaData';
 import { id } from './id';
 
-import RectangleOverlayViewerTool from '../../../extensions/text-input-extension/src/tools/RectangleOverlayViewerTool';
+// import RectangleOverlayViewerTool from '../../../extensions/text-input-extension/src/tools/RectangleOverlayViewerTool';
 
 const ohif = {
   layout: '@ohif/extension-default.layoutTemplateModule.viewerLayout',
@@ -53,10 +53,8 @@ function modeFactory({ modeConfiguration }) {
      * Runs when the Mode Route is mounted to the DOM. Usually used to initialize
      * Services and other resources.
      */
-    onModeEnter: ({ servicesManager, extensionManager, commandsManager }) => {
-      const { measurementService, toolbarService, toolGroupService } = servicesManager.services;
-
-      measurementService.clearMeasurements();
+    onModeEnter: async ({ servicesManager, extensionManager, commandsManager }) => {
+      const { segmentationService, displaySetService, viewportGridService, toolbarService, toolGroupService } = servicesManager.services;
 
       // Init Default and SR ToolGroups
       initToolGroups(extensionManager, toolGroupService, commandsManager);
@@ -74,14 +72,76 @@ function modeFactory({ modeConfiguration }) {
         //'Capture',
         'Layout',
         'Crosshairs',
-        'MoreTools',        
+        'MoreTools',
       ]);
       toolbarService.createButtonSection('segmentationToolbox', ['BrushTools', 'Shapes']);
-    
+
+
+      console.log("Entering Generative AI Mode...");
+
+      // ✅ Wait for display sets to load
+    const displaySets = displaySetService.getActiveDisplaySets();
+    if (!displaySets || displaySets.length === 0) {
+      console.warn("No display sets found!");
+      return;
+    }
+
+    console.log("Display Sets: ", displaySets);
+
+    // ✅ Find the CT series (Primary Imaging Data)
+    const ctSeries = displaySets.find(ds => ds.Modality === 'CT' || ds.Modality === 'AI');
+    if (!ctSeries) {
+      console.warn("No CT series found in display sets!");
+      return;
+    }
+
+    console.log("CT Series Found: ", ctSeries);
+
+    // ✅ Find the Segmentation series
+    const segSeries = displaySets.find(ds => ds.Modality === 'SEG');
+    if (!segSeries) {
+      console.warn("No segmentation series found in display sets.");
+      return;
+    }
+
+    console.log("Segmentation Series Found: ", segSeries);
+
+    // ✅ Ensure the segmentation is properly linked before assigning it to the viewport
+    try {
+      console.log("Hydrating segmentation...");
+      await segmentationService.hydrateSegmentation();
+
+      // ✅ Explicitly register segmentation before linking it to the viewport
+      const segmentationId = segSeries.displaySetInstanceUID;
+      segmentationService.addSegmentation({
+        segmentationId,
+        displaySetInstanceUID: segSeries.displaySetInstanceUID,
+      });
+
+      console.log("Segmentation successfully registered:", segmentationId);
+    } catch (error) {
+      console.error("Error hydrating segmentation: ", error);
+    }
+
+    // ✅ Assign segmentation to the correct viewport **AFTER** it is hydrated
+    setTimeout(() => {
+      const viewports = viewportGridService.getState().viewports;
+      if (viewports.length > 0) {
+        console.log("Assigning segmentation to viewport...");
+        viewportGridService.setDisplaySetsForViewports([
+          {
+            viewportId: viewports[0].viewportId,
+            displaySetInstanceUIDs: [ctSeries.displaySetInstanceUID, segSeries.displaySetInstanceUID],
+          },
+        ]);
+        console.log("Segmentation assigned to viewport.");
+      }
+    }, 0); // ✅ Prevents state updates during render
+
 
     // provide meta Data for rectangle overlay
-    initMetaData();
-    
+    // initMetaData();
+
   },
     onModeExit: ({ servicesManager }) => {
       const {

@@ -12,7 +12,7 @@ provided by the <a href="https://ohif.org/">Open Health Imaging Foundation (OHIF
 
 
 
-<img src="viewer_overview.png" alt="Generative AI extension." /> 
+<img src="viewer_overview.png" alt="Generative AI extension." />
 
 Screenshot of Generative AI extension. Left: Findings and Impressions of original CT scan. Right: Enter prompt to generate CT and server Status, below already generated images.
 
@@ -20,6 +20,32 @@ Screenshot of Generative AI extension. Left: Findings and Impressions of origina
 
 
 ## Developing
+
+### Branches
+
+#### `master` branch - The latest dev (beta) release
+
+- `master` - The latest dev release
+
+This is typically where the latest development happens. Code that is in the master branch has passed code reviews and automated tests, but it may not be deemed ready for production. This branch usually contains the most recent changes and features being worked on by the development team. It's often the starting point for creating feature branches (where new features are developed) and hotfix branches (for urgent fixes).
+
+Each package is tagged with beta version numbers, and published to npm such as `@ohif/ui@3.6.0-beta.1`
+
+### `release/*` branches - The latest stable releases
+Once the `master` branch code reaches a stable, release-ready state, we conduct a comprehensive code review and QA testing. Upon approval, we create a new release branch from `master`. These branches represent the latest stable version considered ready for production.
+
+For example, `release/3.5` is the branch for version 3.5.0, and `release/3.6` is for version 3.6.0. After each release, we wait a few days to ensure no critical bugs. If any are found, we fix them in the release branch and create a new release with a minor version bump, e.g., 3.5.1 in the `release/3.5` branch.
+
+Each package is tagged with version numbers and published to npm, such as `@ohif/ui@3.5.0`. Note that `master` is always ahead of the `release` branch. We publish docker builds for both beta and stable releases.
+
+Here is a schematic representation of our development workflow:
+
+![alt text](platform/docs/docs/assets/img/github-readme-branches-Jun2024.png)
+
+
+
+
+
 ### Requirements
 
 - [Yarn 1.17.3+](https://yarnpkg.com/en/docs/install)
@@ -36,22 +62,64 @@ Screenshot of Generative AI extension. Left: Findings and Impressions of origina
    - `git clone https://github.com/TomWartm/Viewers.git`
 2. Navigate to the cloned project's directory
 3. `yarn install` to restore dependencies and link projects
-4. Start backend server `yarn orthanc:up`
+4. [OPTIONAL] Start backend server `yarn orthanc:up` if you are not going to use the deployed Server API
 5. Start the Application with Orthanc as backend `yarn dev:orthanc` (in a new terminal)
+5a. IF YOU ARE NOT USING LOCAL DOCKER FOR ORTHANC: You can also just run `yarn dev` and it will work
+6. You may need to update the frontend URL path to blackened located in this file: extensions/text-input-extension/src/GenerativeAIComponent.tsx
+7. If you want to deploy the frontend, then you need to run `npm run build` then `firebase deploy`. Make sure you are in the root directory of the project.
 
 #### Run Backend
+0. For local development with the model: ssh -L 3443:localhost:3443 exouser@149.165.174.17
 1. Clone the backend repository (on a machine with large GPU RAM)
     - `git clone https://github.com/TomWartm/MedsynBackend`
 2. Navigate to the cloned project's directory
 3. Install required python packages `conda env create --file environment.yml`
-4. Actiave environment `conda activate medsyn-3-8`
+4. Activate environment `conda activate medsyn-3-8`
 5. Navigate to src folder
 6. Run flask server `python app.py`
+
+#### Notes about Backend
+- Always shelve the VM when you are done using it
+- Don't release the Public IP Address
+- Open the web desktop to activate conda environment in the terminal (only need to start from step 4)
 
 #### Add dummy Data
 Add NIfTI files to the folder `data/nifti` (some are available on our google drive) and use the notebook in `backend/nifti_to_orthan.ipynb` to converti files into DICOM and upload to the Orthanc server.
 
+#### Pinging the Model API on PSC
+(this may be helpful: https://www.psc.edu/resources/bridges-2/user-guide/)
+* RunMedSyn.ipnyb in this folder: [https://drive.google.com/drive/u/0/folders/1BW8n9D_nBhsLVCdVsN52JaO72Ky23AdI](https://drive.google.com/drive/u/0/folders/1cnKxtEfCOsOYPCQ2xxBLiIYqnj-2ipZR)
+* You need the whole folder on PSC in your home directory
+* You need to set up the conda environment:
+    - `module load anaconda3`
+    - `conda activate # source /opt/packages/anaconda3/etc/profile.d/conda.sh`
+    - go to MedSyn folder, run `conda env create --file environment.yml`
+    - `conda activate medsyn-3-8`
+    - if you didn't do this, then `conda install ipykernel` and `python3 -m ipykernel install --user --name medsyn-3-8 --display-name "PYTHON-medsyn-3-8"`
+    - When you launch a jupyter notebook, you have to set Extra Slurm Args to --gres=gpu:v100-32:4
+    - partition it to GPU-shared
+    - after you generate an image from there, you can if you want run `nifti-to-orthanic.ipynb` in the GenAIViewer Repo to view image in the UI OR you can use ITK-SNAP program instead
 
+# Restore dependencies
+yarn install
+```
+
+## Commands
+
+These commands are available from the root directory. Each project directory
+also supports a number of commands that can be found in their respective
+`README.md` and `package.json` files.
+
+| Commands                | Description                                                   |
+| ---------------------------- | ------------------------------------------------------------- |
+| **Develop**                  |                                                               |
+| `dev` or `start`             | Default development experience for Viewer                     |
+| `test:unit`                  | Jest multi-project test runner; overall coverage              |
+| **Deploy**                   |                                                               |
+| `build`\*                    | Builds production output for our PWA Viewer                   |  |
+
+\* - For more information on our different builds, check out our [Deploy
+Docs][deployment-docs]
 
 ## Project
 
@@ -105,7 +173,7 @@ you'll see the following:
 To manually load images into the Tool you can drag-and-drop with the Upload feature on the study overview page, opload directly to Orthanc server on its interface (`http://localhost:8042/app/explorer.html`) or programmatically with python (check `backend/nifti_to_orthanc.ipynb`)
 
 ## Backend
-Images are stored on a the Orthanc server you can open up the Interface running on `http://localhost:8042/app/explorer.html`. 
+Images are stored on a the Orthanc server you can open up the Interface running on `http://localhost:8042/app/explorer.html`.
 
 ## License
 [![MIT License][license-image]][license-url]
@@ -173,3 +241,5 @@ Images are stored on a the Orthanc server you can open up the Interface running 
 [extension-vtk]: extensions/vtk/README.md
 [vtk-npm]: https://www.npmjs.com/package/@ohif/extension-vtk
 <!-- prettier-ignore-end -->
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FOHIF%2FViewers.svg?type=large&issueType=license)](https://app.fossa.com/projects/git%2Bgithub.com%2FOHIF%2FViewers?ref=badge_large&issueType=license)

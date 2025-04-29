@@ -1,0 +1,11 @@
+# Use orthanc-plugins base image
+FROM jodogne/orthanc-plugins
+
+# Copy your updated orthanc.json into the container
+COPY orthanc.json /platform/app/.recipes/Nginx-Orthanc/config/orthanc.json
+
+# Expose necessary ports
+EXPOSE 8042 4242
+
+# Start Orthanc
+CMD ["Orthanc", "/platform/app/.recipes/Nginx-Orthanc/config/orthanc.json"]

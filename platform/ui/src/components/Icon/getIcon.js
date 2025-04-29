@@ -9,6 +9,7 @@ import { ReactComponent as calendar } from './../../assets/icons/calendar.svg';
 import { ReactComponent as cancel } from './../../assets/icons/cancel.svg';
 import { ReactComponent as clipboard } from './../../assets/icons/clipboard.svg';
 import { ReactComponent as close } from './../../assets/icons/closeIcon.svg';
+import { ReactComponent as database } from './../../assets/icons/database.svg';
 import { ReactComponent as dottedCircle } from './../../assets/icons/dotted-circle.svg';
 import { ReactComponent as circledCheckmark } from './../../assets/icons/circled-checkmark.svg';
 import { ReactComponent as chevronDown } from './../../assets/icons/chevron-down.svg';
@@ -138,6 +139,7 @@ import { ReactComponent as iconAdd } from './../../assets/icons/icon-add.svg';
 import { ReactComponent as iconRename } from './../../assets/icons/icon-rename.svg';
 import { ReactComponent as iconDelete } from './../../assets/icons/icon-delete.svg';
 import { ReactComponent as iconMoreMenu } from './../../assets/icons/icon-more-menu.svg';
+import { ReactComponent as iconNewGeneration } from './../../assets/icons/icon-new-generation.svg';
 import { ReactComponent as iconToolBrush } from './../../assets/icons/tool-seg-brush.svg';
 import { ReactComponent as iconToolEraser } from './../../assets/icons/tool-seg-eraser.svg';
 import { ReactComponent as iconToolScissor } from './../../assets/icons/icon-tool-scissor.svg';
@@ -214,6 +216,7 @@ const ICONS = {
   cancel: cancel,
   clipboard: clipboard,
   close: close,
+  database: database,
   'dotted-circle': dottedCircle,
   'circled-checkmark': circledCheckmark,
   'chevron-down': chevronDown,
@@ -233,6 +236,7 @@ const ICONS = {
   'icon-alert-small': iconAlertSmall,
   'icon-clear-field': iconClearField,
   'icon-close': iconClose,
+  'icon-new-generation': iconNewGeneration,
   'icon-play': iconPlay,
   'icon-pause': iconPause,
   'icon-search': iconSearch,

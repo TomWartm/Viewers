@@ -1,8 +1,6 @@
-import {
-  WindowLevelMenuItem,
-} from '@ohif/ui';
+import { WindowLevelMenuItem } from '@ohif/ui';
 import { defaults, ToolbarService } from '@ohif/core';
-import type { Button } from '@ohif/core/types';
+import { Button } from '@ohif/core/types';
 
 const { windowLevelPresets } = defaults;
 
@@ -14,27 +12,22 @@ function _createWwwcPreset(preset, title, subtitle) {
     commands: [
       {
         commandName: 'setWindowLevel',
-        commandOptions: {
-          ...windowLevelPresets[preset],
-        },
+        commandOptions: { ...windowLevelPresets[preset] },
         context: 'CORNERSTONE',
       },
     ],
   };
 }
 
-function _createSetToolActiveCommands(toolName, toolGroupIds = ['default', 'mpr', ]) {
+function _createSetToolActiveCommands(toolName, toolGroupIds = ['default', 'mpr']) {
   return toolGroupIds.map(toolGroupId => ({
     commandName: 'setToolActive',
-    commandOptions: {
-      toolGroupId,
-      toolName,
-    },
+    commandOptions: { toolGroupId, toolName },
     context: 'CORNERSTONE',
   }));
 }
 
-const toolbarButtons: Button[] = [
+const toolbarButtons = [
   {
     id: 'MeasurementTools',
     uiType: 'ohif.splitButton',
@@ -49,10 +42,7 @@ const toolbarButtons: Button[] = [
         commands: _createSetToolActiveCommands('Length'),
         evaluate: 'evaluate.cornerstoneTool',
       }),
-      secondary: {
-        icon: 'chevron-down',
-        tooltip: 'More Measure Tools',
-      },
+      secondary: { icon: 'chevron-down', tooltip: 'More Measure Tools' },
       items: [
         ToolbarService.createButton({
           id: 'Bidirectional',
@@ -104,10 +94,7 @@ const toolbarButtons: Button[] = [
         commands: _createSetToolActiveCommands('WindowLevel'),
         evaluate: 'evaluate.cornerstoneTool',
       }),
-      secondary: {
-        icon: 'chevron-down',
-        tooltip: 'W/L Presets',
-      },
+      secondary: { icon: 'chevron-down', tooltip: 'W/L Presets' },
       renderer: WindowLevelMenuItem,
       items: [
         _createWwwcPreset(1, 'Soft tissue', '400 / 40'),
@@ -134,125 +121,90 @@ const toolbarButtons: Button[] = [
     props: {
       icon: 'tool-capture',
       label: 'Capture',
-      commands: [
-        {
-          commandName: 'showDownloadViewportModal',
-          context: 'CORNERSTONE',
-        },
+      commands: [{ commandName: 'showDownloadViewportModal', context: 'CORNERSTONE' }],
+      evaluate: [
+        'evaluate.action',
+        { name: 'evaluate.viewport.supported', unsupportedViewportTypes: ['video', 'wholeSlide'] },
       ],
-      evaluate: 'evaluate.action',
     },
   },
-   {
+  {
     id: 'Layout',
     uiType: 'ohif.layoutSelector',
     props: {
       rows: 3,
       columns: 4,
       evaluate: 'evaluate.action',
-      commands: [
-        {
-          commandName: 'setViewportGridLayout',
-        },
-      ],
+      commands: [{ commandName: 'setViewportGridLayout' }],
     },
   },
   {
-  id: 'MoreTools',
-  uiType: 'ohif.splitButton',
-  props: {
-    groupId: 'MoreTools',
-    evaluate: 'evaluate.group.promoteToPrimaryIfCornerstoneToolNotActiveInTheList',
-    primary: ToolbarService.createButton({
-      id: 'Reset',
-      icon: 'tool-reset',
-      label: 'Reset View',
-      tooltip: 'Reset View',
-      commands: [
-        {
-          commandName: 'resetViewport',
-          context: 'CORNERSTONE',
-        },
+    id: 'MoreTools',
+    uiType: 'ohif.splitButton',
+    props: {
+      groupId: 'MoreTools',
+      evaluate: 'evaluate.group.promoteToPrimaryIfCornerstoneToolNotActiveInTheList',
+      primary: ToolbarService.createButton({
+        id: 'Reset',
+        icon: 'tool-reset',
+        label: 'Reset View',
+        tooltip: 'Reset View',
+        commands: [{ commandName: 'resetViewport', context: 'CORNERSTONE' }],
+        evaluate: 'evaluate.action',
+      }),
+      secondary: { icon: 'chevron-down', tooltip: 'More Tools' },
+      items: [
+        ToolbarService.createButton({
+          id: 'Reset',
+          icon: 'tool-reset',
+          label: 'Reset View',
+          tooltip: 'Reset View',
+          commands: [{ commandName: 'resetViewport', context: 'CORNERSTONE' }],
+          evaluate: 'evaluate.action',
+        }),
+        ToolbarService.createButton({
+          id: 'RotateRight',
+          icon: 'tool-rotate-right',
+          label: 'Rotate Right',
+          tooltip: 'Rotate Right +90',
+          commands: [{ commandName: 'rotateViewportCW', context: 'CORNERSTONE' }],
+          evaluate: 'evaluate.action',
+        }),
+        ToolbarService.createButton({
+          id: 'FlipHorizontal',
+          icon: 'tool-flip-horizontal',
+          label: 'Flip Horizontally',
+          tooltip: 'Flip Horizontally',
+          commands: [{ commandName: 'flipViewportHorizontal', context: 'CORNERSTONE' }],
+          evaluate: 'evaluate.action',
+        }),
+        ToolbarService.createButton({
+          id: 'StackScroll',
+          icon: 'tool-stack-scroll',
+          label: 'Stack Scroll',
+          tooltip: 'Stack Scroll',
+          commands: _createSetToolActiveCommands('StackScroll'),
+          evaluate: 'evaluate.cornerstoneTool',
+        }),
+        ToolbarService.createButton({
+          id: 'Invert',
+          icon: 'tool-invert',
+          label: 'Invert Colors',
+          tooltip: 'Invert Colors',
+          commands: [{ commandName: 'invertViewport', context: 'CORNERSTONE' }],
+          evaluate: 'evaluate.action',
+        }),
+        ToolbarService.createButton({
+          id: 'CalibrationLine',
+          icon: 'tool-calibration',
+          label: 'Calibration Line',
+          tooltip: 'Calibration Line',
+          commands: _createSetToolActiveCommands('CalibrationLine'),
+          evaluate: 'evaluate.cornerstoneTool',
+        }),
       ],
-      evaluate: 'evaluate.action',
-    }),
-    secondary: {
-      icon: 'chevron-down',
-      tooltip: 'More Tools',
     },
-    items: [
-      ToolbarService.createButton({
-      id: 'Reset',
-      icon: 'tool-reset',
-      label: 'Reset View',
-      tooltip: 'Reset View',
-      commands: [
-        {
-          commandName: 'resetViewport',
-          context: 'CORNERSTONE',
-        },
-      ],
-      evaluate: 'evaluate.action',
-    }),
-      ToolbarService.createButton({
-        id: 'RotateRight',
-        icon: 'tool-rotate-right',
-        label: 'Rotate Right',
-        tooltip: 'Rotate Right +90',
-        commands: [
-          {
-            commandName: 'rotateViewportCW',
-            context: 'CORNERSTONE',
-          },
-        ],
-        evaluate: 'evaluate.action',
-      }),
-      ToolbarService.createButton({
-        id: 'FlipHorizontal',
-        icon: 'tool-flip-horizontal',
-        label: 'Flip Horizontally',
-        tooltip: 'Flip Horizontally',
-        commands: [
-          {
-            commandName: 'flipViewportHorizontal',
-            context: 'CORNERSTONE',
-          },
-        ],
-        evaluate: 'evaluate.action',
-      }),
-      ToolbarService.createButton({
-        id: 'StackScroll',
-        icon: 'tool-stack-scroll',
-        label: 'Stack Scroll',
-        tooltip: 'Stack Scroll',
-        commands: _createSetToolActiveCommands('StackScroll'),
-        evaluate: 'evaluate.cornerstoneTool',
-      }),
-      ToolbarService.createButton({
-        id: 'Invert',
-        icon: 'tool-invert',
-        label: 'Invert Colors',
-        tooltip: 'Invert Colors',
-        commands: [
-          {
-            commandName: 'invertViewport',
-            context: 'CORNERSTONE',
-          },
-        ],
-        evaluate: 'evaluate.action',
-      }),
-      ToolbarService.createButton({
-        id: 'CalibrationLine',
-        icon: 'tool-calibration',
-        label: 'Calibration Line',
-        tooltip: 'Calibration Line',
-        commands: _createSetToolActiveCommands('CalibrationLine'),
-        evaluate: 'evaluate.cornerstoneTool',
-      }),
-
-    ],
   },
-},
 ];
 
 export default toolbarButtons;

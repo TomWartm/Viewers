@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { useDrag } from 'react-dnd';
@@ -41,6 +41,7 @@ const Thumbnail = ({
   seriesDate = formatDate(seriesDate);
 
   const [lastTap, setLastTap] = useState(0);
+  const [overlayActive, setOverlayActive] = useState(false);
 
   const handleTouchEnd = e => {
     const currentTime = new Date().getTime();
@@ -52,6 +53,26 @@ const Thumbnail = ({
     }
     setLastTap(currentTime);
   };
+
+  // const appContext = useContext(AppContext);
+
+  // if (!appContext) {
+  //   console.error('AppContext not found');
+  //   return null
+  // } else {
+  //   console.log(appContext);
+  // }
+
+  // const { commandsManager, servicesManager } = appContext;
+
+  // const toggleOverlay = () => {
+  //   setOverlayActive(!overlayActive);
+  //   if (commandsManager) {
+  //     commandsManager.runCommand('toggleImageOverlay');
+  //   } else {
+  //     console.error('commandsManager is undefined');
+  //   }
+  // };
 
   return (
     <div
@@ -95,7 +116,7 @@ const Thumbnail = ({
           <div className="mr-4">
             {/*<span className="text-primary-main font-bold">{'Series Date: '}</span>*/}
             {seriesDate}
-          </div> 
+          </div>
           <div className="flex flex-1 flex-row items-center">
             <Icon
               name={countIcon || 'group-layers'}

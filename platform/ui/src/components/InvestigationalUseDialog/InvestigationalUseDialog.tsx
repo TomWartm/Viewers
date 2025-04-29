@@ -72,7 +72,8 @@ const InvestigationalUseDialog = ({
           <div className="flex flex-col">
             <div className="text-[19px] text-white">
               OHIF Viewer is{' '}
-              <span className="text-primary-light">for investigational use only</span>
+              <span className="text-primary-light">for investigational use only</span>.
+              The non-AI generated data presented here is from the <span className="text-primary-light"><a href="https://huggingface.co/datasets/ibrahimhamamci/CT-RATE">CT-RATE</a></span> dataset.
             </div>
             <div className="text-[13px] text-white">
               <span
@@ -93,7 +94,7 @@ const InvestigationalUseDialog = ({
           Confirm and Hide
         </Button>
       </div>
-    </div>
+    </div >
   );
 };
 

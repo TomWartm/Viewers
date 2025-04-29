@@ -8,7 +8,7 @@ export { ImageViewerContext, ImageViewerProvider, useImageViewer } from './Image
 
 export { CineContext, default as CineProvider, useCine } from './CineProvider';
 
-export { default as SnackbarProvider, useSnackbar, withSnackbar } from './SnackbarProvider';
+// export { default as SnackbarProvider, useSnackbar, withSnackbar } from './SnackbarProvider';
 
 export { default as ViewportDialogProvider, useViewportDialog } from './ViewportDialogProvider';
 

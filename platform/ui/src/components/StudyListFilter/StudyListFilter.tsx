@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
 import LegacyButton from '../LegacyButton';
 import Icon from '../Icon';
@@ -27,6 +28,7 @@ const StudyListFilter = ({
     });
   };
   const isSortingEnabled = numOfStudies > 0 && numOfStudies <= 100;
+  const navigate = useNavigate();
 
   return (
     <React.Fragment>
@@ -51,6 +53,18 @@ const StudyListFilter = ({
                     <span>{t('Upload')}</span>
                   </div>
                 )}
+                {/* New Generation Button */}
+                <div>
+
+                  <LegacyButton
+                    variant="contained"
+                    color="primary"
+                    onClick={() => navigate('/search')}
+                    startIcon={<Icon name="icon-new-generation" />}
+                  >
+                    New Generation
+                  </LegacyButton>
+                </div>
               </div>
               <div className="flex h-[34px] flex-row items-center">
                 {/* TODO revisit the completely rounded style of button used for clearing the study list filter - for now use LegacyButton*/}
@@ -67,18 +81,19 @@ const StudyListFilter = ({
                     {t('ClearFilters')}
                   </LegacyButton>
                 )}
-                <Typography
-                  variant="h6"
-                  className="text-primary-light"
-                >
-                  {`${t('Number of studies')}: `}
-                </Typography>
+
                 <Typography
                   variant="h6"
                   className="mr-2"
                   data-cy={'num-studies'}
                 >
                   {numOfStudies > 100 ? '>100' : numOfStudies}
+                </Typography>
+                <Typography
+                  variant="h6"
+                  className="text-primary-light"
+                >
+                  {`${t('Studies')} `}
                 </Typography>
               </div>
             </div>
@@ -99,7 +114,9 @@ const StudyListFilter = ({
         {numOfStudies > 100 && (
           <div className="container m-auto">
             <div className="bg-primary-main rounded-b py-1 text-center text-base">
-              <p className="text-white">{t('Filter list to 100 studies or less to enable sorting')}</p>
+              <p className="text-white">
+                {t('Filter list to 100 studies or less to enable sorting')}
+              </p>
             </div>
           </div>
         )}

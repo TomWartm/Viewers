@@ -1,54 +1,42 @@
-function createTools(utilityModule) { 
+function createTools(utilityModule) {
   const { toolNames, Enums } = utilityModule.exports;
   return {
     active: [
       { toolName: toolNames.WindowLevel, bindings: [{ mouseButton: Enums.MouseBindings.Primary }] },
       { toolName: toolNames.Pan, bindings: [{ mouseButton: Enums.MouseBindings.Auxiliary }] },
       { toolName: toolNames.Zoom, bindings: [{ mouseButton: Enums.MouseBindings.Secondary }] },
-      { toolName: toolNames.StackScrollMouseWheel, bindings: [] },
+      { toolName: toolNames.StackScroll, bindings: [{ mouseButton: Enums.MouseBindings.Wheel }] },
     ],
     passive: [
       {
         toolName: 'CircularBrush',
         parentTool: 'Brush',
-        configuration: {
-          activeStrategy: 'FILL_INSIDE_CIRCLE',
-        },
+        configuration: { activeStrategy: 'FILL_INSIDE_CIRCLE' },
       },
       {
         toolName: 'CircularEraser',
         parentTool: 'Brush',
-        configuration: {
-          activeStrategy: 'ERASE_INSIDE_CIRCLE',
-        },
+        configuration: { activeStrategy: 'ERASE_INSIDE_CIRCLE' },
       },
       {
         toolName: 'SphereBrush',
         parentTool: 'Brush',
-        configuration: {
-          activeStrategy: 'FILL_INSIDE_SPHERE',
-        },
+        configuration: { activeStrategy: 'FILL_INSIDE_SPHERE' },
       },
       {
         toolName: 'SphereEraser',
         parentTool: 'Brush',
-        configuration: {
-          activeStrategy: 'ERASE_INSIDE_SPHERE',
-        },
+        configuration: { activeStrategy: 'ERASE_INSIDE_SPHERE' },
       },
       {
         toolName: 'ThresholdCircularBrush',
         parentTool: 'Brush',
-        configuration: {
-          activeStrategy: 'THRESHOLD_INSIDE_CIRCLE',
-        },
+        configuration: { activeStrategy: 'THRESHOLD_INSIDE_CIRCLE' },
       },
       {
         toolName: 'ThresholdSphereBrush',
         parentTool: 'Brush',
-        configuration: {
-          activeStrategy: 'THRESHOLD_INSIDE_SPHERE',
-        },
+        configuration: { activeStrategy: 'THRESHOLD_INSIDE_SPHERE' },
       },
       {
         toolName: 'ThresholdCircularBrushDynamic',
@@ -62,10 +50,7 @@ function createTools(utilityModule) {
             // to use the use the center segment index to determine
             // if inside -> same segment, if outside -> eraser
             // useCenterSegmentIndex: true,
-            THRESHOLD: {
-              isDynamic: true,
-              dynamicRadius: 3,
-            },
+            THRESHOLD: { isDynamic: true, dynamicRadius: 3 },
           },
         },
       },
@@ -102,13 +87,10 @@ function initMPRToolGroup(extensionManager, toolGroupService, commandsManager) {
       configuration: {
         viewportIndicators: false,
         disableOnPassive: true,
-        autoPan: {
-          enabled: false,
-          panSize: 10,
-        },
+        autoPan: { enabled: false, panSize: 10 },
       },
     },
-    { toolName: utilityModule.exports.toolNames.ReferenceLines },
+    { toolName: utilityModule.exports.toolNames.ReferenceLines }
     //{ toolName: 'RectangleOverlayViewer'} // uncomment to enable this tool for MPR view (not possible to reference so far)
   );
   toolGroupService.createToolGroupAndAddTools('mpr', tools);
@@ -127,14 +109,8 @@ function initVolume3DToolGroup(extensionManager, toolGroupService) {
         toolName: toolNames.TrackballRotateTool,
         bindings: [{ mouseButton: Enums.MouseBindings.Primary }],
       },
-      {
-        toolName: toolNames.Zoom,
-        bindings: [{ mouseButton: Enums.MouseBindings.Secondary }],
-      },
-      {
-        toolName: toolNames.Pan,
-        bindings: [{ mouseButton: Enums.MouseBindings.Auxiliary }],
-      },
+      { toolName: toolNames.Zoom, bindings: [{ mouseButton: Enums.MouseBindings.Secondary }] },
+      { toolName: toolNames.Pan, bindings: [{ mouseButton: Enums.MouseBindings.Auxiliary }] },
     ],
   };
 
@@ -146,15 +122,12 @@ function initAIToolGroup(extensionManager, toolGroupService, commandsManager) {
     '@ohif/extension-cornerstone.utilityModule.tools'
   );
 
-
   const { toolNames, Enums } = utilityModule.exports;
-  
-  const tools ={ enabled: [{ toolName: 'RectangleOverlayViewer'}]
-  };
+
+  const tools = { enabled: [{ toolName: 'RectangleOverlayViewer' }] };
 
   // add rectangle overlay tool to the default tool group
   toolGroupService.addToolsToToolGroup('default', tools);
-
 }
 
 function initToolGroups(extensionManager, toolGroupService, commandsManager) {

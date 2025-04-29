@@ -6,7 +6,10 @@
   "MaximumStorageSize": 0,
   "MaximumPatientCount": 0,
   "LuaScripts": [],
-  "Plugins": ["/usr/share/orthanc/plugins", "/usr/local/share/orthanc/plugins"],
+  "Plugins": [
+    "/usr/share/orthanc/plugins",
+    "/usr/local/share/orthanc/plugins"
+  ],
   "ConcurrentJobs": 2,
   "HttpServerEnabled": true,
   "HttpPort": 8042,
@@ -26,14 +29,11 @@
   "RleTransferSyntaxAccepted": true,
   "UnknownSopClassAccepted": false,
   "DicomScpTimeout": 30,
-
   "RemoteAccessAllowed": true,
   "SslEnabled": false,
   "SslCertificate": "certificate.pem",
   "AuthenticationEnabled": false,
-  "RegisteredUsers": {
-    "test": "test"
-  },
+  "RegisteredUsers": {},
   "DicomModalities": {},
   "DicomModalitiesInDatabase": false,
   "DicomAlwaysAllowEcho": true,
@@ -43,9 +43,7 @@
   "OrthancPeers": {},
   "OrthancPeersInDatabase": false,
   "HttpProxy": "",
-
   "HttpVerbose": true,
-
   "HttpTimeout": 10,
   "HttpsVerifyPeers": true,
   "HttpsCACertificates": "",
@@ -53,7 +51,7 @@
     "SeriesPrompt": 1024,
     "Impressions": 1025,
     "Findings": 1026,
-    "Feedback":1027
+    "Feedback": 1027
   },
   "StableAge": 60,
   "StrictAetComparison": false,
@@ -78,7 +76,6 @@
   "MediaArchiveSize": 1,
   "StorageAccessOnFind": "Always",
   "MetricsEnabled": true,
-
   "DicomWeb": {
     "Enable": true,
     "Root": "/dicom-web/",
@@ -88,6 +85,13 @@
     "Ssl": false,
     "StowMaxInstances": 10,
     "StowMaxSize": 10,
-    "QidoCaseSensitive": false
+    "QidoCaseSensitive": false,
+    "CorsOrigins": ["https://genai-radiology.web.app","https://orthanc.katelyncmorrison.com","http://localhost:3000"]
+  },
+  "Cors": {
+    "Enable": true,
+    "AllowOrigin": "*",
+    "AllowMethods": "GET, POST, PUT, DELETE, OPTIONS",
+    "AllowHeaders": "Content-Type, Authorization, Accept"
   }
 }

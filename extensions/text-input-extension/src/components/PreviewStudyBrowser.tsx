@@ -8,7 +8,7 @@ import PreviewStudy from './PreviewStudy';
 const { sortStudyInstances, formatDate } = utils;
 
 /**
- * This is copied from @ohif/extension-default/src/Panels/PanelStudyBrowser 
+ * This is copied from @ohif/extension-default/src/Panels/PanelStudyBrowser
  * // remove code duplication here and in the original file
  * @param {*} param0
  */
@@ -64,10 +64,13 @@ function PreviewStudyBrowser({
   useEffect(() => {
     // Fetch all studies for the patient in each primary study
     async function fetchStudiesForPatient(StudyInstanceUID) {
+      console.log("StudyInstanceUID to navigate to", StudyInstanceUID);
       // current study qido
       const qidoForStudyUID = await dataSource.query.studies.search({
         studyInstanceUid: StudyInstanceUID,
       });
+
+      console.log("qidoForStudyUID", qidoForStudyUID);
 
       if (!qidoForStudyUID?.length) {
         navigate('/notfoundstudy', '_self');
@@ -84,7 +87,7 @@ function PreviewStudyBrowser({
         console.warn(error);
       }
       const mappedStudies = _mapDataSourceStudies(qidoStudiesForPatient);
-      
+
 
       // add all studies to expanded studies
       mappedStudies.forEach(study => {
@@ -358,16 +361,16 @@ function _createStudyBrowserTabs(primaryStudyInstanceUIDs, studyDisplayList, dis
       const tabStudy = Object.assign({}, study, {
         displaySets: [series],
       });
-      
+
       if (series.modality.includes("AI")) {
         generatedStudies.push(tabStudy);
       } else {
         primaryStudies.push(tabStudy);
-        
-        
+
+
       }
       allStudies.push(tabStudy);
-    
+
     });
   });
 

@@ -32,6 +32,7 @@ const hpScale: Types.HangingProtocol.Protocol = {
     defaultDisplaySetId: {
       seriesMatchingRules: [
         {
+          weight: 1,
           attribute: 'numImageFrames',
           constraint: {
             greaterThan: { value: 0 },
@@ -42,7 +43,7 @@ const hpScale: Types.HangingProtocol.Protocol = {
         // It has no affect if nothing is specified in the URL.
         {
           attribute: 'isDisplaySetFromUrl',
-          weight: 10,
+          weight: 20,
           constraint: {
             equals: true,
           },

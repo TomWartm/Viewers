@@ -1,20 +1,22 @@
 {
   "name": "ohif-monorepo-root",
   "private": true,
+  "packageManager": "yarn@1.22.22",
   "workspaces": {
     "packages": [
       "platform/*",
       "extensions/*",
-      "modes/*"
+      "modes/*",
+      "addOns/externals/*"
     ],
     "nohoist": [
       "**/html-minifier-terser"
     ]
   },
   "engines": {
-    "node": ">=16",
+    "node": ">=18",
     "npm": ">=6",
-    "yarn": ">=1.16.0"
+    "yarn": ">=1.20.0"
   },
   "scripts": {
     "cm": "npx git-cz",
@@ -36,16 +38,18 @@
     "dev:orthanc:no:cache": "lerna run dev:orthanc:no:cache --stream",
     "dev:dcm4chee": "lerna run dev:dcm4chee --stream",
     "dev:static": "lerna run dev:static --stream",
-    "orthanc:up": "docker-compose -f platform/app/.recipes/Nginx-Orthanc/docker-compose.yml up",
+    "orthanc:up": "docker compose -f platform/app/.recipes/Nginx-Orthanc/docker-compose.yml up",
+    "install:dev": "cp -f yarn.lock addOns/yarn.lock && cd addOns && yarn install --modules-folder ../node_modules",
     "preinstall": "node preinstall.js",
     "start": "yarn run dev",
     "test": "yarn run test:unit",
-    "test:data": "git submodule update --init -r",
+    "test:data": "git submodule update --init -f testdata",
     "test-watch": "jest --collectCoverage --watchAll",
     "test:unit": "jest --collectCoverage",
     "test:unit:ci": "lerna run test:unit:ci --parallel --stream",
     "test:e2e": "lerna run test:e2e --stream",
     "test:e2e:ci": "npx playwright test",
+    "test:e2e:ui": "npx playwright test --ui",
     "test:e2e:headed": "npx playwright test --headed",
     "test:e2e:dist": "lerna run test:e2e:dist --stream",
     "test:e2e:serve": "yarn test:data && lerna run test:e2e:serve --stream",
@@ -61,16 +65,24 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.20.13",
-    "@kitware/vtk.js": "30.4.1",
+    "@kitware/vtk.js": "32.9.0",
     "core-js": "^3.2.1",
+    "cornerstone-wado-image-loader": "^4.13.2",
+    "execa": "^8.0.1",
+    "firebase": "^10.14.0",
+    "numjs": "^0.16.1",
+    "numpy-parser": "^1.2.3",
+    "react-firebase-hooks": "^5.1.1",
     "react-icons": "^5.2.1"
   },
-  "peerDependencies": {
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+  "optionalDependencies": {
+    "@percy/cypress": "^3.1.1",
+    "@playwright/test": "^1.48.0",
+    "cypress": "13.7.2",
+    "cypress-file-upload": "^3.5.3"
   },
   "devDependencies": {
-    "@babel/core": "^7.23.2",
+    "@babel/core": "7.24.7",
     "@babel/plugin-proposal-class-properties": "^7.16.7",
     "@babel/plugin-proposal-object-rest-spread": "^7.17.3",
     "@babel/plugin-proposal-private-methods": "^7.18.6",
@@ -78,9 +90,9 @@
     "@babel/plugin-syntax-dynamic-import": "^7.8.3",
     "@babel/plugin-transform-arrow-functions": "^7.16.7",
     "@babel/plugin-transform-regenerator": "^7.16.7",
-    "@babel/plugin-transform-runtime": "^7.23.2",
+    "@babel/plugin-transform-runtime": "7.24.7",
     "@babel/plugin-transform-typescript": "^7.13.0",
-    "@babel/preset-env": "^7.23.2",
+    "@babel/preset-env": "7.24.7",
     "@babel/preset-react": "^7.16.7",
     "@babel/preset-typescript": "^7.13.0",
     "@svgr/webpack": "^8.1.0",
@@ -110,7 +122,6 @@
     "eslint-plugin-react-hooks": "^4.4.0",
     "eslint-plugin-tsdoc": "^0.2.11",
     "eslint-webpack-plugin": "^2.5.3",
-    "execa": "^8.0.1",
     "extract-css-chunks-webpack-plugin": "^4.5.4",
     "html-webpack-plugin": "^5.3.2",
     "husky": "^3.0.0",
@@ -126,8 +137,8 @@
     "postcss-import": "^14.0.2",
     "postcss-loader": "^6.1.1",
     "postcss-preset-env": "^7.4.3",
-    "prettier": "^3.0.3",
-    "prettier-plugin-tailwindcss": "^0.5.4",
+    "prettier": "^3.3.3",
+    "prettier-plugin-tailwindcss": "0.6.8",
     "react-hot-loader": "^4.13.0",
     "semver": "^7.5.1",
     "serve": "^14.2.0",
@@ -163,11 +174,22 @@
   "resolutions": {
     "**/@babel/runtime": "^7.20.13",
     "commander": "8.3.0",
+    "dcmjs": ">=0.33.0",
+    "dicomweb-client": ">=0.10.4",
     "nth-check": "^2.1.1",
     "trim-newlines": "^5.0.0",
     "glob-parent": "^6.0.2",
     "trim": "^1.0.0",
     "package-json": "^8.1.0",
-    "sharp": "^0.32.6"
+    "typescript": "5.5.4",
+    "sharp": "^0.32.6",
+    "ip": "https://registry.npmjs.org/ip-address/-/ip-address-9.0.5.tgz",
+    "**/express/path-to-regexp": "0.1.10",
+    "**/serve/serve-handler/path-to-regexp": "3.3.0",
+    "**/@docusaurus/core/serve-handler/path-to-regexp": "3.3.0",
+    "**/react-router/**/path-to-regexp": "1.9.0",
+    "rollup": "2.79.2",
+    "body-parser": "1.20.3",
+    "@kitware/vtk.js": "32.9.0"
   }
 }

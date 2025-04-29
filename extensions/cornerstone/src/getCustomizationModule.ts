@@ -1,9 +1,9 @@
 import { Enums } from '@cornerstonejs/tools';
 import { toolNames } from './initCornerstoneTools';
-import DicomUpload from './components/DicomUpload/DicomUpload';
 import defaultWindowLevelPresets from './components/WindowLevelActionMenu/defaultWindowLevelPresets';
 import { colormaps } from './utils/colormaps';
 import { CONSTANTS } from '@cornerstonejs/core';
+import { CornerstoneOverlay } from './Viewport/Overlays/CustomizableViewportOverlay';
 
 const DefaultColormap = 'Grayscale';
 const { VIEWPORT_PRESETS } = CONSTANTS;
@@ -22,10 +22,12 @@ const tools = {
       toolName: toolNames.Zoom,
       bindings: [{ mouseButton: Enums.MouseBindings.Secondary }],
     },
-    { toolName: toolNames.StackScrollMouseWheel, bindings: [] },
+    {
+      toolName: toolNames.StackScroll,
+      bindings: [{ mouseButton: Enums.MouseBindings.Wheel }],
+    },
   ],
   enabled: [
-    { toolName: toolNames.SegmentationDisplay },
     {
       toolName: toolNames.PlanarFreehandContourSegmentation,
       configuration: {
@@ -38,15 +40,9 @@ const tools = {
 function getCustomizationModule() {
   return [
     {
-      name: 'cornerstoneDicomUploadComponent',
-      value: {
-        id: 'dicomUploadComponent',
-        component: DicomUpload,
-      },
-    },
-    {
       name: 'default',
       value: [
+        CornerstoneOverlay,
         {
           id: 'cornerstone.overlayViewportTools',
           tools,
@@ -118,7 +114,7 @@ function getCustomizationModule() {
                 type: 'value',
               },
               {
-                value: 'areaUnit',
+                value: 'areaUnits',
                 for: ['area'],
                 type: 'unit',
               },
@@ -138,12 +134,19 @@ function getCustomizationModule() {
               },
               {
                 displayName: 'Unit',
-                value: 'areaUnit',
+                value: 'areaUnits',
                 type: 'value',
               },
             ],
           },
           PlanarFreehandROI: {
+            displayTextOpen: [
+              {
+                displayName: 'Length',
+                value: 'length',
+                type: 'value',
+              },
+            ],
             displayText: [
               {
                 displayName: 'Mean',
@@ -161,12 +164,12 @@ function getCustomizationModule() {
                 type: 'value',
               },
               {
-                value: 'modalityUnit',
+                value: 'pixelValueUnits',
                 for: ['mean', 'max' /** 'stdDev **/],
                 type: 'unit',
               },
               {
-                value: 'areaUnit',
+                value: 'areaUnits',
                 for: ['area'],
                 type: 'unit',
               },

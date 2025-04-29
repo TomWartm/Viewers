@@ -11,7 +11,7 @@ function promptHydrateSEG({
   segDisplaySet,
   viewportId,
   preHydrateCallbacks,
-  hydrateSEGDisplaySet,
+  hydrateCallback,
 }: withAppTypes) {
   const { uiViewportDialogService } = servicesManager.services;
   const extensionManager = servicesManager._extensionManager;
@@ -28,7 +28,7 @@ function promptHydrateSEG({
       });
 
       window.setTimeout(async () => {
-        const isHydrated = await hydrateSEGDisplaySet({
+        const isHydrated = await hydrateCallback({
           segDisplaySet,
           viewportId,
         });
@@ -44,11 +44,13 @@ function _askHydrate(uiViewportDialogService, viewportId) {
     const message = 'Do you want to open this Segmentation?';
     const actions = [
       {
+        id: 'no-hydrate',
         type: ButtonEnums.type.secondary,
         text: 'No',
         value: RESPONSE.CANCEL,
       },
       {
+        id: 'yes-hydrate',
         type: ButtonEnums.type.primary,
         text: 'Yes',
         value: RESPONSE.HYDRATE_SEG,

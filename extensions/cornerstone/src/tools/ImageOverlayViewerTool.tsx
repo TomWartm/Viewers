@@ -1,5 +1,5 @@
 import { VolumeViewport, metaData, utilities } from '@cornerstonejs/core';
-import { IStackViewport, IVolumeViewport, Point3 } from '@cornerstonejs/core/dist/esm/types';
+import { IStackViewport, IVolumeViewport } from '@cornerstonejs/core/types';
 import { AnnotationDisplayTool, drawing } from '@cornerstonejs/tools';
 import { guid, b64toBlob } from '@ohif/core/src/utils';
 import OverlayPlaneModuleProvider from './OverlayPlaneModuleProvider';
@@ -16,7 +16,7 @@ interface CachedStat {
 }
 
 /**
- * Image Overlay Viewer tool is not a traditional tool that requires user interactin.
+ * Image Overlay Viewer tool is not a traditional tool that requires user interaction.
  * But it is used to display Pixel Overlays. And it will provide toggling capability.
  *
  * The documentation for Overlay Plane Module of DICOM can be found in [C.9.2 of

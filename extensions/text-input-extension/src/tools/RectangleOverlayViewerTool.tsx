@@ -35,7 +35,7 @@ class RectangleOverlayViewerTool extends AnnotationDisplayTool {
   }
 
   renderAnnotation = (enabledElement, svgDrawingHelper) => {
-    
+
     const { viewport } = enabledElement;
     const imageId = this.getReferencedImageId(viewport);
 
@@ -44,7 +44,7 @@ class RectangleOverlayViewerTool extends AnnotationDisplayTool {
     }
 
     // recieve metadata of this imageId from metadata provided
-    var rectMetadata = metaData.get('Overlay', imageId); 
+    var rectMetadata = metaData.get('Overlay', imageId);
 
     // TODO: check interface of rectMetadata
     if (rectMetadata) {
@@ -54,7 +54,7 @@ class RectangleOverlayViewerTool extends AnnotationDisplayTool {
 
     return true;
   };
-  
+
   private  _renderRectangles(enabledElement, svgDrawingHelper, rectangles) {
     const { viewport } = enabledElement;
     const imageId = this.getReferencedImageId(viewport);
@@ -63,7 +63,7 @@ class RectangleOverlayViewerTool extends AnnotationDisplayTool {
 
     for(const rectangle of rectangles){
       const metaData = rectangle.attributes;
-      
+
       const x = metaData.x; // center of rectangle x-coord
       const y = metaData.y; // center of rectangle y-coord
       const width = metaData.width; // width of rectangle
@@ -103,12 +103,7 @@ class RectangleOverlayViewerTool extends AnnotationDisplayTool {
       }
     };
   }
-  
-  
-  
-  
 
-  
 }
 
 export default RectangleOverlayViewerTool;

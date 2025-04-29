@@ -1,10 +1,11 @@
-// External
-
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import i18n from '@ohif/i18n';
 import { I18nextProvider } from 'react-i18next';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
+import Login from './components/Login'; // Import Login component
+import SignUp from './components/SignUp'; // Import SignUp component
+import ProtectedRoute from './components/ProtectedRoute'; // Import ProtectedRoute component
 import Compose from './routes/Mode/Compose';
 import {
   ExtensionManager,
@@ -16,21 +17,25 @@ import {
   DialogProvider,
   Modal,
   ModalProvider,
-  SnackbarProvider,
   ThemeWrapper,
+  // SnackbarProvider,
   ViewportDialogProvider,
   ViewportGridProvider,
   CineProvider,
   UserAuthenticationProvider,
   ToolboxProvider,
 } from '@ohif/ui';
-import { ThemeWrapper as ThemeWrapperNext, NotificationProvider } from '@ohif/ui-next';
-// Viewer Project
-// TODO: Should this influence study list?
+import {
+  ThemeWrapper as ThemeWrapperNext,
+  NotificationProvider,
+  TooltipProvider,
+} from '@ohif/ui-next';
 import { AppConfigProvider } from '@state';
 import createRoutes from './routes';
 import appInit from './appInit.js';
 import OpenIdConnectRoutes from './utils/OpenIdConnectRoutes';
+import SearchHomePage from './components/SearchHomePage'; // Import the new component
+import { ShepherdJourneyProvider } from 'react-shepherd';
 
 let commandsManager: CommandsManager,
   extensionManager: ExtensionManager,
@@ -38,19 +43,11 @@ let commandsManager: CommandsManager,
   serviceProvidersManager: ServiceProvidersManager,
   hotkeysManager: HotkeysManager;
 
+const requireAuth = true;
+
 function App({
   config = {
-    /**
-     * Relative route from domain root that OHIF instance is installed at.
-     * For example:
-     *
-     * Hosted at: https://ohif.org/where-i-host-the/viewer/
-     * Value: `/where-i-host-the/viewer/`
-     * */
     routerBaseName: '/',
-    /**
-     *
-     */
     showLoadingIndicator: true,
     showStudyList: true,
     oidc: [],
@@ -60,6 +57,7 @@ function App({
   defaultModes = [],
 }) {
   const [init, setInit] = useState(null);
+
   useEffect(() => {
     const run = async () => {
       appInit(config, defaultExtensions, defaultModes).then(setInit).catch(console.error);
@@ -83,21 +81,19 @@ function App({
   const appConfigState = init.appConfig;
   const { routerBasename, modes, dataSources, oidc, showStudyList } = appConfigState;
 
-  // get the maximum 3D texture size
   const canvas = document.createElement('canvas');
   const gl = canvas.getContext('webgl2');
-
   const max3DTextureSize = gl.getParameter(gl.MAX_3D_TEXTURE_SIZE);
   appConfigState.max3DTextureSize = max3DTextureSize;
 
   const {
     uiDialogService,
     uiModalService,
-    uiNotificationService,
     uiViewportDialogService,
     viewportGridService,
     cineService,
     userAuthenticationService,
+    uiNotificationService,
     customizationService,
   } = servicesManager.services;
 
@@ -111,10 +107,12 @@ function App({
     [ViewportGridProvider, { service: viewportGridService }],
     [ViewportDialogProvider, { service: uiViewportDialogService }],
     [CineProvider, { service: cineService }],
-    // [NotificationProvider, { service: uiNotificationService }],
-    [SnackbarProvider, { service: uiNotificationService }],
+    // [SnackbarProvider, { service: uiNotificationService }],
+    [NotificationProvider, { service: uiNotificationService }],
+    [TooltipProvider],
     [DialogProvider, { service: uiDialogService }],
     [ModalProvider, { service: uiModalService, modal: Modal }],
+    [ShepherdJourneyProvider],
   ];
 
   // Loop through and register each of the service providers registered with the ServiceProvidersManager.
@@ -127,12 +125,7 @@ function App({
 
   const CombinedProviders = ({ children }) => Compose({ components: providers, children });
 
-  let authRoutes = null;
-
-  // Should there be a generic call to init on the extension manager?
-  customizationService.init(extensionManager);
-
-  // Use config to create routes
+  // Create routes using config
   const appRoutes = createRoutes({
     modes,
     dataSources,
@@ -143,6 +136,9 @@ function App({
     routerBasename,
     showStudyList,
   });
+
+  let authRoutes = null;
+  customizationService.init(extensionManager);
 
   if (oidc) {
     authRoutes = (
@@ -157,8 +153,35 @@ function App({
   return (
     <CombinedProviders>
       <BrowserRouter basename={routerBasename}>
-        {authRoutes}
-        {appRoutes}
+        <Routes>
+              <Route
+                path="/login"
+                element={<Login />}
+              />
+              <Route
+                path="/signup"
+                element={<SignUp />}
+              />
+              <Route
+                path="/search"
+                element={
+                  <ProtectedRoute>
+                    <SearchHomePage />
+                  </ProtectedRoute>
+                }
+              />
+              {requireAuth ? (
+                <>
+                  <Route
+                    path="/"
+                    element={<ProtectedRoute>{appRoutes}</ProtectedRoute>}
+                  />
+                </>
+              ) : (
+                <>
+                </>
+              )}
+        </Routes>
       </BrowserRouter>
     </CombinedProviders>
   );
@@ -174,14 +197,9 @@ App.propTypes = {
       extensions: PropTypes.array,
     }),
   ]).isRequired,
-  /* Extensions that are "bundled" or "baked-in" to the application.
-   * These would be provided at build time as part of they entry point. */
   defaultExtensions: PropTypes.array,
-  /* Modes that are "bundled" or "baked-in" to the application.
-   * These would be provided at build time as part of they entry point. */
   defaultModes: PropTypes.array,
 };
 
 export default App;
-
 export { commandsManager, extensionManager, servicesManager };
